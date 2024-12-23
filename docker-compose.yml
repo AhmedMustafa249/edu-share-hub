@@ -23,5 +23,6 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      - ~/.ssh:/root/.ssh  # Mount SSH keys from host to container
       - ./app:/app
       - ./static:/app/public
