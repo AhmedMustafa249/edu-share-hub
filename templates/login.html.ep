@@ -1,0 +1,84 @@
+% layout 'default';
+% title 'Login Page';
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="background" >
+    <div class="register-container">
+      <div class="header">
+        <div class="logo">
+          <img src="/images/utmLogo.png" alt="UTM Logo">
+        </div>
+        <h2 class="header-text">EDU Share-Hub</h2>
+      </div>
+      <form class="register-form">
+        
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" value="12085" placeholder="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-container">
+            <input type="password" id="password" name="password" value="S808323" placeholder="••••••••••••" required>
+            <button type="button" class="toggle-password">👁️</button>
+          </div>
+        </div>
+        
+        <button type="submit" class="register-button" id="btnLogin">Login</button>
+      </form>
+
+      
+    </div>
+  </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    //console.log('Hello from JS');
+    //sessionStorage.removeItem("utmwebfc_session");
+
+    console.log(sessionStorage.getItem("utmwebfc_session"));
+    var url = "http://web.fc.utm.my/ttms/web_man_webservice_json.cgi?entity=authentication";
+
+$('#btnLogin').click(function (event) { 
+    // Prevent the form from submitting
+    event.preventDefault();
+
+    var username = $('#username').val();
+    var password = $('#password').val();
+    console.log(`Try to login: ${username}, ${password}`);
+    var loginURL = `${url}&login=${username}&password=${password}`;
+    console.log("Login URL: " + loginURL);
+
+    fetch(loginURL)
+    .then(function (res) { 
+        console.log("Response received, checking status...");
+        return res.json(); 
+    })
+    .then(jsonInst => {
+        console.log("JSON received: ", jsonInst);
+        if (jsonInst && jsonInst.length > 0 && jsonInst[0].session_id) {
+            console.log("Session ID:", jsonInst[0].session_id);
+            sessionStorage.setItem("utmwebfc_session", JSON.stringify(jsonInst[0]));
+            window.location.href = "/dashboard"; // Redirects to a Mojolicious route
+        } else {
+            throw new Error("Invalid credentials or empty response.");
+        }
+    })
+    .catch(err => {
+        console.error("Error: ", err);
+        alert("Login failed. Please check your credentials.");
+    });
+});
+</script>
+</html>
